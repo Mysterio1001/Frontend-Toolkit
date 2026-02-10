@@ -1,0 +1,24 @@
+{
+  "name": "ian-utils-library",
+  "version": "1.1.0",
+  "description": "A collection of lightweight, high-quality JavaScript utility functions for frontend development.",
+  "scripts": {
+    "test": "echo \"ok\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mysterio1001/Frontend-Toolkit.git"
+  },
+  "keywords": [
+    "utils",
+    "frontend",
+    "loading",
+    "javascript"
+  ],
+  "author": "Ian Wu (https://github.com/Mysterio1001)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mysterio1001/Frontend-Toolkit/issues"
+  },
+  "homepage": "https://github.com/Mysterio1001/Frontend-Toolkit#readme"
+}
