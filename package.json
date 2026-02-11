@@ -1,7 +1,8 @@
 {
   "name": "ian-utils-library",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A collection of lightweight, high-quality JavaScript utility functions for frontend development.",
+  "type": "module",
   "scripts": {
     "test": "echo \"ok\""
   },
