@@ -1,6 +1,6 @@
 /*!
  * @file loading.js - Global Loading Overlay Utility
- * @version 1.1.0
+ * @version 1.2.0
  * @author Ian Wu (https://github.com/Mysterio1001)
  * @description Multi-request counter based loading overlay with pure JS rendering. No framework dependency, works with any frontend project.
  * @license MIT
@@ -136,13 +136,18 @@ export const showLoading = (text) => {
 /**
  * @function hideLoading
  * @description Hide the loading overlay. Decrements the internal counter; removes DOM only when counter reaches zero.
+ * @param {boolean} [force=false] - If true, bypasses the counter and forces the overlay to close.
  */
-export const hideLoading = () => {
+export const hideLoading = (force = false) => {
   if (!loadingInstance || loadingCount <= 0) {
     loadingCount = 0; // ensure counter resets to zero
     return;
   }
-  loadingCount--;
+  if (!force) {
+    loadingCount--;
+  } else {
+    loadingCount = 0;
+  }
 
   if (loadingCount === 0) {
     setTimeout(() => {
