@@ -7,6 +7,13 @@
  */
 
 /**
+ * --- Usage (使用方式) ---
+ *
+ * Import (引入):
+ *    import { deepCopy, isEmpty, pick, omit } from "@/utils/data";
+ */
+
+/**
  * @function deepCopy
  * @description Performs a deep copy, preferring native structuredClone with JSON serialization as fallback (執行深拷貝，優先使用原生 structuredClone，若失敗則降級使用 JSON 序列化)
  * @param {any} data - The source object, array, or primitive to copy (欲拷貝的原對象、陣列或基本型別資料)
