@@ -1,6 +1,6 @@
 {
   "name": "@mysterio1001/toolkit",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "A collection of lightweight, high-quality JavaScript utility functions for frontend development.",
   "type": "module",
   "main": "index.js",
