@@ -1,6 +1,6 @@
 /*!
  * @file loading.js - Global Loading Overlay Utility (全域載入遮罩工具)
- * @version 1.2.0
+ * @version 1.3.0
  * @author Ian Wu (https://github.com/Mysterio1001)
  * @description Multi-request counter based loading overlay with pure JS rendering. No framework dependency, works with any frontend project. (基於多請求計數器的載入遮罩，使用純 JS 渲染，不依賴任何框架，適用於任何前端專案)
  * @license MIT
@@ -39,7 +39,14 @@
  *      .catch((err) => { ... })
  *      .finally(() => hideLoading());
  *
- * 6. Custom styles: modify the config object below. (自訂樣式：修改下方的 config 物件)
+ * 6. Loading bar mode (進度條模式):
+ *    import { loadingBarStart, setLoadingBar, loadingBarEnd } from "@/utils/loading";
+ *
+ *    loadingBarStart();       // show overlay with progress bar at 1% (顯示遮罩，進度條從 1% 開始)
+ *    setLoadingBar(50);       // set progress bar to 50% (將進度條設定至 50%)
+ *    loadingBarEnd();         // animate to 100% then remove overlay (動畫推進至 100% 後移除遮罩)
+ *
+ * 7. Custom styles: modify the config object below. (自訂樣式：修改下方的 config 物件)
  */
 
 let loadingCount = 0;
@@ -49,10 +56,11 @@ let prevOverflow = "";
 // Style Configuration (樣式設定)
 const config = {
   maskBackgroundColor: "rgba(255, 255, 255, 0.7)", // mask background color (遮罩背景色)
-  mainColor: "hsl(25, 35%, 35%)", // primary color for spinner & text (旋轉器與文字的主色)
+  mainColor: "hsl(25, 35%, 35%)", // primary color for spinner , text and loading bar (旋轉器,文字以及進度條的主色)
+  trackColor: "#f3f3f3", // track color for spinner and loading bar (旋轉器和進度條的軌道色)
+  barHeight: "10px",
   spinnerSize: "42px", // spinner size (旋轉器大小)
   spinnerBorderWidth: "3px", // spinner border width (旋轉器邊框寬度)
-  spinnerTrackColor: "#f3f3f3", // spinner track color (旋轉器軌道顏色)
   fontSize: "14px", // loading text font size (載入文字字級)
   zIndex: 2000, // overlay z-index (遮罩層級)
 };
@@ -83,10 +91,24 @@ const injectStyle = () => {
         .ian-loading-spinner {
             width: ${config.spinnerSize};
             height: ${config.spinnerSize};
-            border: ${config.spinnerBorderWidth} solid ${config.spinnerTrackColor};
+            border: ${config.spinnerBorderWidth} solid ${config.trackColor};
             border-top: ${config.spinnerBorderWidth} solid ${config.mainColor};
             border-radius: 50%;
             animation: ian-loading-rotate 1s linear infinite;
+        }
+        .ian-loading-bar {
+            overflow: hidden;
+            width: 80%;
+            box-shadow: inset 0 1px 2px 1px ${config.trackColor};
+            height: ${config.barHeight};
+            border-radius: 10px;
+        }
+        .ian-loading-bar-line {
+            width: 0;
+            height: 100%;
+            background-color:  ${config.mainColor};
+            box-shadow: inset 0 1px 2px 1px ${config.trackColor};
+            transition: width 0.6s ease-in-out;
         }
         .ian-loading-text {
             color: ${config.mainColor};
@@ -161,4 +183,72 @@ export const hideLoading = (force = false) => {
       document.body.style.overflow = prevOverflow; // restore original overflow (還原原始 overflow)
     }, 300);
   }
+};
+
+let widthPercent = 0;
+
+/**
+ * @function loadingBarStart
+ * @description Show a loading bar overlay in the center of the screen. Disables scrolling while active. (顯示載入進度條遮罩於螢幕正中央，啟用時禁用捲動)
+ */
+export const loadingBarStart = () => {
+  injectStyle();
+
+  if (loadingInstance && loadingInstance.parentNode) {
+    loadingInstance.parentNode.removeChild(loadingInstance);
+  }
+
+  loadingInstance = document.createElement("div");
+  loadingInstance.className = "ian-loading-mask";
+
+  const bar = document.createElement("div");
+  bar.className = "ian-loading-bar";
+
+  const line = document.createElement("div");
+  line.className = "ian-loading-bar-line";
+
+  loadingInstance.appendChild(bar);
+  bar.appendChild(line);
+  document.body.appendChild(loadingInstance);
+
+  prevOverflow = document.body.style.overflow;
+  document.body.style.overflow = "hidden";
+
+  widthPercent = 0;
+};
+
+/**
+ * @function setLoadingBar
+ * @description Set the loading bar to a specific width percentage. Ignores values less than 1. (將進度條設定為指定的寬度百分比，忽略小於 1 的值)
+ * @param {number} num - Target width percentage (1–100) (目標寬度百分比，範圍 1–100)
+ */
+export const setLoadingBar = (num) => {
+  if (num < 1 || num > 100) return;
+  const line = document.querySelector(".ian-loading-bar-line");
+  if (!line) return;
+  widthPercent = num;
+  requestAnimationFrame(() => {
+    line.style.width = `${widthPercent}%`;
+  });
+};
+
+/**
+ * @function loadingBarEnd
+ * @description Complete the loading bar by animating to 100%, then remove the overlay after the transition ends. (將進度條動畫推進至 100%，待 transition 結束後移除遮罩)
+ */
+export const loadingBarEnd = () => {
+  const line = document.querySelector(".ian-loading-bar-line");
+  if (!line) return;
+
+  const cleanup = () => {
+    if (loadingInstance && loadingInstance.parentNode) {
+      loadingInstance.parentNode.removeChild(loadingInstance);
+    }
+    loadingInstance = null;
+    widthPercent = 0;
+    document.body.style.overflow = prevOverflow; // restore original overflow (還原原始 overflow)
+  };
+  // Wait for transition to finish before cleanup; fires only once and auto-removes the listener (等待 transition 完成後再清除，僅觸發一次並自動移除 listener)
+  line.addEventListener("transitionend", cleanup, { once: true });
+  setLoadingBar(100);
 };
