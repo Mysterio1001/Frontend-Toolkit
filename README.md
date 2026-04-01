@@ -21,8 +21,6 @@ Create a file named .npmrc in your project's root directory (at the same level a
 
 #### How to Obtain a TOKEN
 
-### Installation via npm
-
 Due to GitHub Packages' security mechanism, downloading packages requires a token with read permissions:
 
 - Navigate to the GitHub Tokens (classic) page
@@ -74,14 +72,14 @@ import { formatDate, showLoading, deepCopy } from "@mysterio1001/toolkit";
 
 #### 如何取得 TOKEN
 
-### 使用 npm 安裝
-
 由於 GitHub Packages 的安全機制，下載套件需提供具備讀取權限的 Token：
 
 - 前往 GitHub Tokens (classic) 頁面
 - 點擊 Generate new token > Generate new token (classic)
 - 在 Select scopes 中勾選 read:packages 權限後生成 Token
 - 將生成的 ghp\_... 字串替換掉上方代碼中的 您的\_GITHUB_TOKEN 即可
+
+### 使用 npm 安裝
 
 開啟終端機，執行以下指令進行安裝：
 
